@@ -85,18 +85,18 @@ def run_epoch(
     c = 0
     n = 0
     # Start training/valuating
-    for i, (images, labels_onehoe) in enumerate(data_loader):
+    for i, (images, labels_onehot) in enumerate(data_loader):
         images = images.to(args.device)
-        labels_onehoe = labels_onehoe.to(args.device)
-        labels = labels_onehoe.squeeze()
+        labels_onehot = labels_onehot.to(args.device)
+        labels = labels_onehot.squeeze()
         _, labels = torch.max(labels, 1)
         if phase == 'train':
             r = np.random.rand(1)
             if args.beta > 0 and r < args.cutmix_prob:
                 lam = np.random.beta(args.beta, args.beta)
                 rand_index = torch.randperm(images.size()[0]).cpu()
-                target_a = labels_onehoe
-                target_b = labels_onehoe[rand_index]
+                target_a = labels_onehot
+                target_b = labels_onehot[rand_index]
                 bbx1, bby1, bbx2, bby2 = rand_bbox(images.size(), lam)
                 images[:, :, bbx1:bbx2, bby1:bby2] = images[rand_index, :, bbx1:bbx2, bby1:bby2]
                 # adjust lambda to exactly match pixel ratio
