@@ -69,6 +69,10 @@ class LSR(nn.Module):
 
         smoothed_target = self._smooth_label(target, x.size(1), self.e)
         x = self.log_softmax(x)
+
+        print("x", x)
+        print("smoothed_target:", smoothed_target)
+
         loss = torch.sum(- x * smoothed_target, dim=1)
 
         if self.reduction == 'none':
@@ -82,4 +86,18 @@ class LSR(nn.Module):
 
         else:
             raise ValueError('unrecognized option, expect reduction to be one of none, mean, sum')
-criterion = LSR() #替换nn.CrossEntropyLoss(
+
+if __name__ == "__main__":
+    criterion = LSR() #替换nn.CrossEntropyLoss(
+    N = 2
+    C = 2
+    inputs = torch.rand(N, C)
+    targets = torch.LongTensor(N).random_(C)
+    inputs_w = inputs.clone().cpu()
+    targets_w = targets.clone().cpu()
+    print('----inputs----')
+    print(inputs)
+    print('---target-----')
+    print(targets, targets.size)
+    loss = criterion(inputs_w, targets_w)
+    print('CE = {}'.format(loss.item()))
